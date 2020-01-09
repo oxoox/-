@@ -1,0 +1,43 @@
+(async function () {
+
+var ultrasonic;
+var rgbled;
+var servo;
+
+
+boardReady({device: 'YmbnJ'}, async function (board) {
+  board.systemReset();
+  board.samplingInterval = 250;
+  ultrasonic = getUltrasonic(board, 11, 10);
+  rgbled = getRGBLed(board, 7, 8, 6);
+  servo = getServo(board, 8);
+  for (var count = 0; count < 10; count++) {
+    servo.angle = 175;
+    await delay(1);
+    servo.angle = 5;
+    await delay(1);
+  }
+  rgbled.setColor('#000000');
+  ultrasonic.ping(async function(cm){
+    console.log(ultrasonic.distance);
+    if (ultrasonic.distance > 0 && ultrasonic.distance < 5) {
+      rgbled.setColor('#ff0000');
+      document.getElementById("demo-area-01-show").innerHTML = '单5そだ';
+      document.getElementById("demo-area-01-show").style.fontSize = 20+"px";
+    } else if (ultrasonic.distance > 5 && ultrasonic.distance < 10) {
+      rgbled.setColor('#3366ff');
+      document.getElementById("demo-area-01-show").innerHTML = '单10そだ';
+    } else if (ultrasonic.distance > 10 && ultrasonic.distance < 15) {
+      rgbled.setColor('#ff6666');
+      document.getElementById("demo-area-01-show").innerHTML = '单15そだ';
+    } else if (ultrasonic.distance > 15 && ultrasonic.distance < 20) {
+      rgbled.setColor('#ffcc00');
+      document.getElementById("demo-area-01-show").innerHTML = '单20そだ';
+    } else {
+      rgbled.setColor('#000000');
+      document.getElementById("demo-area-01-show").innerHTML = '20そだ';
+    }
+  }, 300);
+});
+
+}());
